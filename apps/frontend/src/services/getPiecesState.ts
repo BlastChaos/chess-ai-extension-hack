@@ -1,6 +1,22 @@
-import { PieceState, Color, Piece } from "@chess-ai/ai";
+import type { PieceState } from "@chess-ai/ai";
 
-export function getPieces(): PieceState[] {
+export const Piece = {
+  n: "knight",
+  q: "queen",
+  r: "rook",
+  b: "bishop",
+  p: "pawn",
+  k: "king",
+} as const;
+export type Piece = (typeof Piece)[keyof typeof Piece];
+
+export const Color = {
+  w: "white",
+  b: "black",
+} as const;
+export type Color = (typeof Color)[keyof typeof Color];
+
+export function getPiecesState(): PieceState[] {
   const whites = getColorPieces("w");
 
   const blacks = getColorPieces("b");

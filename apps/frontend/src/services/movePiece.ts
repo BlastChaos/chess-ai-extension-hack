@@ -1,4 +1,4 @@
-import { Position } from "@chess-ai/ai";
+import type { Position } from "@chess-ai/ai";
 
 type Props = {
   from: Position;

@@ -28,6 +28,7 @@ export const appRouter = router({
               x: z.number(),
               y: z.number(),
             }),
+            moveString: z.string(),
             piece: z.nativeEnum(Piece),
             color: z.nativeEnum(Color),
             turn: z.number(),

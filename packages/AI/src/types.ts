@@ -4,6 +4,7 @@ export const Piece = {
   r: "rook",
   b: "bishop",
   p: "pawn",
+  k: "king",
 } as const;
 export type Piece = (typeof Piece)[keyof typeof Piece];
 
@@ -21,6 +22,7 @@ export type Position = {
 export type Move = {
   from: Position;
   to: Position;
+  moveString: string;
   piece: Piece;
   color: Color;
   turn: number;

@@ -75,6 +75,8 @@ It is this side's turn.
   const initialPosition = chessToSquare(object.initialPosition);
   const finalPosition = chessToSquare(object.finalPosition);
 
+  console.log("best move", object);
+
   return {
     initialPosition: initialPosition ?? { x: 0, y: 0 },
     finalPosition: finalPosition ?? { x: 0, y: 0 },
