@@ -36,6 +36,7 @@ async function start() {
     console.log("Registering trpc plugin");
     await fastify.listen({
       port: config.port,
+      host: "0.0.0.0",
     });
     console.log(`Server listening on http://localhost:${config.port}`);
   } catch (err) {
