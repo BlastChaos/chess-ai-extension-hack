@@ -21,7 +21,7 @@ const isPlaying = () => {
   const boardLayout = document.querySelector("div.board-layout-sidebar");
 
   if (!boardLayout) {
-    console.log("boardLayout not found");
+    console.error("boardLayout not found");
     return false;
   }
 
@@ -49,6 +49,10 @@ const isPlaying = () => {
 
     if (!isPlaying) {
       console.log("User is not playing");
+      chrome.runtime.sendMessage<MessageInput>({
+        type: "GameState",
+        gameState: null,
+      });
       return;
     }
     console.log("User is playing");

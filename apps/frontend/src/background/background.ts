@@ -16,7 +16,7 @@ chrome.runtime.onConnect.addListener((port) => {
 chrome.runtime.onMessage.addListener((msg: MessageInput) => {
   if (msg.type === "GameState") {
     const gameState = msg.gameState;
-    saveStorage({ gameState });
+    saveStorage({ gameState: gameState ?? undefined });
     for (const port of popupPorts) {
       try {
         port.postMessage({

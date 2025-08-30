@@ -4,7 +4,7 @@ export type MessageType = "getChessInfo" | "move" | "GameState";
 
 export type InputGetChessInfo = { type: "getChessInfo" };
 export type InputMove = { type: "move"; from: Position; to: Position };
-export type InputGameState = { type: "GameState"; gameState: GameState };
+export type InputGameState = { type: "GameState"; gameState: GameState | null };
 
 export type MessageInput = InputGetChessInfo | InputMove | InputGameState;
 

@@ -16,7 +16,6 @@ export const useGetGameState = (): Output => {
     const port = chrome.runtime.connect({ name: "popup" });
 
     const loadGameState = (message: InputGameState) => {
-        console.log("loadGameState", message);
       if (message.type === "GameState") {
         setGameState(message.gameState);
         setLoading(false);
@@ -26,7 +25,6 @@ export const useGetGameState = (): Output => {
     port.onMessage.addListener(loadGameState);
 
     getStorage("gameState").then((res) => {
-        console.log("getStorage", res);
       if (!gameState) {
         setGameState(res);
       }
