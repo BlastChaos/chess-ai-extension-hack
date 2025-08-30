@@ -1,16 +1,17 @@
 import { getGameState } from "@/services/getGameState";
 import { move } from "@/services/movePiece";
-import { MessageType, Props } from "@/utils/sendMessage";
+import { debounce } from "@/utils/debounce";
+import { MessageInput } from "@/utils/sendMessage";
 
 console.log("[Chess AI] Hello world from content script!");
 
 chrome.runtime.onMessage.addListener(
-  (message: Props<MessageType>, _, sendResponse) => {
+  (message: MessageInput, _, sendResponse) => {
     if (message.type === "getChessInfo") {
       return sendResponse(getGameState());
     }
     if (message.type === "move") {
-      return sendResponse(move(message as Props<"move">));
+      return sendResponse(move(message));
     }
   }
 );
@@ -24,7 +25,7 @@ const isPlaying = () => {
     return false;
   }
 
-  const observer = new MutationObserver(() => {
+  const getGameInfo = () => {
     //Have access to the history
 
     const currentActiveButton = document.getElementsByClassName(
@@ -53,11 +54,15 @@ const isPlaying = () => {
     console.log("User is playing");
     const gameState = getGameState();
 
-    chrome.runtime.sendMessage<Props<"GameState">>({
+    chrome.runtime.sendMessage<MessageInput>({
       type: "GameState",
-      gameState: gameState,
+      gameState: gameState.gameState,
     });
-  });
+  };
+
+  const getGameInfoDebounced = debounce(getGameInfo, 500);
+
+  const observer = new MutationObserver(getGameInfoDebounced);
 
   observer.observe(boardLayout, {
     childList: true,

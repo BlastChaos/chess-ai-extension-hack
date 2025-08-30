@@ -2,7 +2,7 @@ import type { GameState } from "@chess-ai/ai";
 
 type Storage = {
   isGaming: boolean;
-  chessInfo: GameState;
+  gameState: GameState;
 };
 
 export async function saveStorage(storage: Partial<Storage>) {

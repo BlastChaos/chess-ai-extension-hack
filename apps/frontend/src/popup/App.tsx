@@ -2,8 +2,13 @@ import "./index.css";
 import { useMutation } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { sendMessage } from "@/utils/sendMessage";
+import { useGetGameState } from "@/hook/useGetGameState";
 export default function App() {
   const { mutateAsync } = useMutation(trpc.getBestMove.mutationOptions());
+
+
+  const { gameState, loading } = useGetGameState();
+  console.log("gameState", gameState);
   const finalTest = async () => {
     console.log("finalTest");
     const test = await sendMessage({
@@ -15,7 +20,7 @@ export default function App() {
     }
     if (test) {
       console.log("test mutate async", test);
-      const bestMove = await mutateAsync(test);
+      const bestMove = await mutateAsync(test.gameState);
       if (!bestMove) {
         return;
       }
@@ -30,7 +35,12 @@ export default function App() {
   };
   return (
     <div className="p-4 flex flex-col w-64">
-      <button className="bg-blue-500 text-white p-2 rounded-md" onClick={finalTest}>Get Chess Info</button>
+      <button
+        className="bg-blue-500 text-white p-2 rounded-md"
+        onClick={finalTest}
+      >
+        Get Chess Info
+      </button>
     </div>
   );
 }

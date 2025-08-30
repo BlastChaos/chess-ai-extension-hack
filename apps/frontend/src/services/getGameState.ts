@@ -1,9 +1,10 @@
-import type { GameState, Move } from "@chess-ai/ai";
+import type { Move } from "@chess-ai/ai";
+import { OutputGetChessInfo } from "@/utils/sendMessage";
 import { getHistory } from "./getHistory";
 import { getPiecesState } from "./getPiecesState";
 import { getUserColor } from "./getUserColor";
 
-export function getGameState(): GameState {
+export function getGameState(): OutputGetChessInfo {
   const pieces = getPiecesState();
   const userColor = getUserColor();
   const history = getHistory();
@@ -15,10 +16,13 @@ export function getGameState(): GameState {
     (isFirstTurn && userColor === "white") || lastTurn.color !== userColor;
 
   return {
-    pieces,
-    userColor,
-    isUserTurn,
-    history,
-    currentTurn: userColor,
+    type: "getChessInfo",
+    gameState: {
+      pieces,
+      userColor,
+      isUserTurn,
+      history,
+      currentTurn: userColor,
+    },
   };
 }

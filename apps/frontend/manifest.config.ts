@@ -15,6 +15,10 @@ export default defineManifest({
     default_popup: "src/popup/index.html",
   },
   permissions: ["activeTab", "debugger", "storage"],
+  background: {
+    service_worker: "src/background/background.ts",
+    type: "module",
+  },
   content_scripts: [
     {
       js: ["src/content/content.ts"],
