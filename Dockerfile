@@ -33,4 +33,6 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 backend
 USER backend
 
+EXPOSE 8080
+
 CMD ["node", "apps/backend/dist/index.js"]
