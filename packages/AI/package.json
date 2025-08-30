@@ -6,6 +6,9 @@
     "build": "tsc"
   },
   "exports": {},
+  "dependencies": {
+    "@trpc/server": "^11.5.0"
+  },
   "devDependencies": {
     "@repo/typescript-config": "*",
     "typescript": "5.9.2"
