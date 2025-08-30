@@ -1,7 +1,7 @@
 import { GameState } from "@chess-ai/ai";
 
 type Output = {
-  gameState: GameState;
+  gameState?: GameState;
   loading: boolean;
 };
 
