@@ -1,0 +1,90 @@
+name: Build and Release Chrome Extension
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the extension
+        run: npm run build
+
+      - name: Find generated zip file
+        id: find-zip
+        run: |
+          ZIP_FILE=$(find apps/frontend/release -name "*.zip" -type f | head -1)
+          if [ -z "$ZIP_FILE" ]; then
+            echo "No zip file found in apps/frontend/release"
+            exit 1
+          fi
+          echo "ZIP_FILE=$ZIP_FILE" >> $GITHUB_OUTPUT
+          echo "ZIP_NAME=$(basename $ZIP_FILE)" >> $GITHUB_OUTPUT
+
+      - name: Extract version from package.json
+        id: extract-version
+        run: |
+          VERSION=$(node -p "require('./apps/frontend/package.json').version")
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "TAG_NAME=v$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check if tag exists
+        id: check-tag
+        run: |
+          if git rev-parse "refs/tags/v${{ steps.extract-version.outputs.VERSION }}" >/dev/null 2>&1; then
+            echo "TAG_EXISTS=true" >> $GITHUB_OUTPUT
+          else
+            echo "TAG_EXISTS=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create GitHub Release
+        if: steps.check-tag.outputs.TAG_EXISTS == 'false'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.extract-version.outputs.TAG_NAME }}
+          name: "Chess AI Extension v${{ steps.extract-version.outputs.VERSION }}"
+          body: |
+            ## Chess AI Chrome Extension Release
+
+            Automatic release for version ${{ steps.extract-version.outputs.VERSION }}
+
+            ### Installation
+            1. Download the `${{ steps.find-zip.outputs.ZIP_NAME }}` file
+            2. Extract the contents
+            3. Open Chrome and go to `chrome://extensions/`
+            4. Enable "Developer mode"
+            5. Click "Load unpacked" and select the extracted folder
+
+            ### Changes
+            - Built from commit: ${{ github.sha }}
+            - Build date: ${{ github.run_id }}
+          files: |
+            ${{ steps.find-zip.outputs.ZIP_FILE }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update existing release
+        if: steps.check-tag.outputs.TAG_EXISTS == 'true'
+        run: |
+          echo "Tag v${{ steps.extract-version.outputs.VERSION }} already exists. Skipping release creation."
+          echo "Consider updating the version in apps/frontend/package.json before pushing."
