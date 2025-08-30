@@ -1,13 +1,20 @@
 {
   "compilerOptions": {
-    "lib": ["esnext", "dom"],
-    "target": "esnext",
+    "lib": ["esnext"],
+    "target": "ES2022",
+    "module": "ESNext",
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "strict": true,
     "moduleResolution": "node",
-    "noEmit": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "rootDir": "src"
   },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
