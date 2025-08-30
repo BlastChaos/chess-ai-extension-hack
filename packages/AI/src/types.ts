@@ -1,17 +1,17 @@
-export const Pieces = {
+export const Piece = {
   n: "knight",
   q: "queen",
   r: "rook",
   b: "bishop",
   p: "pawn",
 } as const;
-export type Pieces = (typeof Pieces)[keyof typeof Pieces];
+export type Piece = (typeof Piece)[keyof typeof Piece];
 
-export const Colors = {
+export const Color = {
   w: "white",
   b: "black",
 } as const;
-export type Colors = (typeof Colors)[keyof typeof Colors];
+export type Color = (typeof Color)[keyof typeof Color];
 
 export type Position = {
   x: number;
@@ -21,20 +21,22 @@ export type Position = {
 export type Move = {
   from: Position;
   to: Position;
-  piece: Pieces;
-  color: Colors;
+  piece: Piece;
+  color: Color;
   turn: number;
-  promotion?: Pieces;
+  promotion?: Piece;
+};
+
+export type PieceState = {
+  piece: Piece;
+  color: Color;
+  position: Position;
 };
 
 export type GameState = {
-  pieces: {
-    piece: Pieces;
-    color: Colors;
-    position: Position;
-  }[];
+  pieces: PieceState[];
   history: Move[];
-  currentTurn: Colors;
-  userColor: Colors;
+  currentTurn: Color;
+  userColor: Color;
   isUserTurn: boolean;
 };

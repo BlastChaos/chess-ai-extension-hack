@@ -1,6 +1,6 @@
 import { publicProcedure, router } from "./trpc.js";
 import { z } from "zod";
-import { Pieces, Colors } from "../types.js";
+import { Piece, Color } from "../types.js";
 import { getBestMove } from "../service/getBestMove.js";
 
 // Export both the router instance and type
@@ -10,8 +10,8 @@ export const appRouter = router({
       z.object({
         pieces: z.array(
           z.object({
-            piece: z.nativeEnum(Pieces),
-            color: z.nativeEnum(Colors),
+            piece: z.nativeEnum(Piece),
+            color: z.nativeEnum(Color),
             position: z.object({
               x: z.number(),
               y: z.number(),
@@ -28,14 +28,14 @@ export const appRouter = router({
               x: z.number(),
               y: z.number(),
             }),
-            piece: z.nativeEnum(Pieces),
-            color: z.nativeEnum(Colors),
+            piece: z.nativeEnum(Piece),
+            color: z.nativeEnum(Color),
             turn: z.number(),
-            promotion: z.nativeEnum(Pieces).optional(),
+            promotion: z.nativeEnum(Piece).optional(),
           })
         ),
-        userColor: z.nativeEnum(Colors),
-        currentTurn: z.nativeEnum(Colors),
+        userColor: z.nativeEnum(Color),
+        currentTurn: z.nativeEnum(Color),
         isUserTurn: z.boolean(),
       })
     )
@@ -49,7 +49,7 @@ export const appRouter = router({
           x: z.number(),
           y: z.number(),
         }),
-        promotion: z.nativeEnum(Pieces).nullable(),
+        promotion: z.nativeEnum(Piece).nullable(),
         reason: z.string(),
       })
     )

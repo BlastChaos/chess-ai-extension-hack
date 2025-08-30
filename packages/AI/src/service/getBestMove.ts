@@ -1,5 +1,5 @@
 import { generateObject } from "ai";
-import { GameState, Pieces, Position } from "../types.js";
+import { GameState, Piece, Position } from "../types.js";
 import { chessToSquare, squareToChess } from "../utils/convert.js";
 import { google } from "@ai-sdk/google";
 import z from "zod";
@@ -7,7 +7,7 @@ import z from "zod";
 type Response = {
   initialPosition: Position;
   finalPosition: Position;
-  promotion: Pieces | null;
+  promotion: Piece | null;
   reason: string;
 };
 
@@ -78,7 +78,7 @@ It is this side's turn.
   return {
     initialPosition: initialPosition ?? { x: 0, y: 0 },
     finalPosition: finalPosition ?? { x: 0, y: 0 },
-    promotion: object.promotion as Pieces | null,
+    promotion: object.promotion as Piece | null,
     reason: object.reason,
   };
 }
