@@ -5,7 +5,14 @@
     "dev": "tsc --watch",
     "build": "tsc"
   },
-  "exports": {},
+  "main": "./dist/export.js",
+  "types": "./dist/export.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/export.d.ts",
+      "import": "./dist/export.js"
+    }
+  },
   "dependencies": {
     "@trpc/server": "^11.5.0",
     "zod": "^3.24.2"
