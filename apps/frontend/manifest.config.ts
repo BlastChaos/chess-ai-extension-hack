@@ -17,7 +17,7 @@ export default defineManifest({
   permissions: ["activeTab", "debugger"],
   content_scripts: [
     {
-      js: ["src/content/main.tsx"],
+      js: ["src/content/content.ts"],
       matches: ["https://*/*"],
     },
   ],
