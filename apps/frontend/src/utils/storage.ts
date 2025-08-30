@@ -2,16 +2,39 @@ import type { GameState } from "@chess-ai/ai";
 
 type Storage = {
   isGaming: boolean;
-  gameState: GameState;
+  chessInfo: GameState;
+  autoPlay: boolean;
 };
+// cache mémoire local
+let memoryCache: Record<string, any> = {}
 
-export async function saveStorage(storage: Partial<Storage>) {
-  await chrome.storage.local.set<Storage>(storage);
+// Sauvegarde avec mise à jour du cache
+export async function saveStorage(storage: Partial<Record<string, any>>) {
+  // maj du cache en mémoire
+  Object.assign(memoryCache, storage)
+
+  // maj dans le storage Chrome
+  await chrome.storage.local.set(storage)
 }
 
-export async function getStorage<T extends keyof Storage>(
+// Récupération avec cache
+export async function getStorage<T extends string>(
   key: T
-): Promise<Storage[T] | null> {
-  const result = await chrome.storage.local.get(key);
-  return result[key] ?? null;
+): Promise<any | null> {
+  // Vérifie si le cache contient déjà la valeur
+  if (key in memoryCache) {
+    return memoryCache[key]
+  }
+
+  // Sinon va chercher dans chrome.storage.local
+  if (!chrome?.storage?.local) {
+    console.warn("chrome.storage.local is not available")
+    return null
+  }
+
+  const result = await chrome.storage.local.get(key)
+  memoryCache[key] = result[key] ?? null
+  return memoryCache[key]
 }
+
+
