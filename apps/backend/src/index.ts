@@ -5,7 +5,7 @@ import {
   fastifyTRPCPlugin,
   FastifyTRPCPluginOptions,
 } from "@trpc/server/adapters/fastify";
-import { router, createContext, AppRouter, appRouter } from "@chess-ai/ai";
+import { createContext, AppRouter, appRouter } from "@chess-ai/ai";
 import { config } from "./config";
 
 dotenv.config();
