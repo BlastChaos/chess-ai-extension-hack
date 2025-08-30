@@ -4,6 +4,7 @@ type Storage = {
   isGaming: boolean;
   chessInfo: GameState;
   autoPlay: boolean;
+  reason: string[];
 };
 // cache mémoire local
 let memoryCache: Record<string, any> = {}

@@ -7,7 +7,7 @@ interface TrafficLightProps {
 
 export const TrafficLight: React.FC<TrafficLightProps> = ({ value }) => {
     return (
-      <div className="flex space-x-6 items-center justify-evenly">
+      <div className="flex space-x-12 items-center justify-evenly">
         {/* Cercle gauche (rouge si false) */}
         <div
           className={clsx(

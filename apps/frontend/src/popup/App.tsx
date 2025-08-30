@@ -5,12 +5,13 @@ import { sendMessage } from "@/utils/sendMessage";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@radix-ui/react-label";
 import { Loader2Icon } from "lucide-react";
 import { getStorage, saveStorage } from "@/utils/storage";
 import { useGetGameState } from "@/hook/useGetGameState";
 import { TrafficLight } from "@/components/trafficLight";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { MoveHistory } from "@/components/ui/move-history";
 
 export default function App() {
   const { mutateAsync, isPending } = useMutation(
@@ -18,19 +19,31 @@ export default function App() {
   );
   const { gameState } = useGetGameState();
   const [loading, setLoading] = useState(false);
-  const [Autoplay, setAutoplay] = useState(false);
-
-  /** Exécute le coup recommandé par l'IA */
-  const finalTest = async () => {
+  const [autoplay, setAutoplay] = useState(false);
+  const [reason, setReason] = useState<string[]>([]);
+  const playBestMove = async () => {
     setLoading(true);
-
     try {
       const chessInfo = await sendMessage({ type: "getChessInfo" });
       if (!chessInfo) return;
 
       const bestMove = await mutateAsync(chessInfo.gameState);
       if (!bestMove) return;
-
+      console.log(bestMove)
+      console.log(reason)
+      getStorage("reason").then((res) => {
+        if (res == null) {
+          var reason = [bestMove.reason ?? "No explanation available"];
+          setReason(reason);
+          saveStorage({ reason: reason });
+        }
+        else {
+          var reason2 = [...res, bestMove.reason ?? "No explanation available"];
+          setReason(reason2);
+          saveStorage({ reason: reason2 });
+        }
+        
+      });
       await sendMessage({
         type: "move",
         from: bestMove.initialPosition,
@@ -41,76 +54,80 @@ export default function App() {
     }
   };
 
-  /** Gestion du switch Autoplay */
   const handleAutoplayChange = (value: boolean) => {
     saveStorage({ autoPlay: value });
     setAutoplay(value);
   };
 
-  /** Charge la config initiale (storage) */
   useEffect(() => {
     getStorage("autoPlay").then((res) => {
       if (res != null) setAutoplay(res);
     });
+    getStorage("reason").then((res) => {
+      if (res != null) setReason(res);
+    });
   }, []);
 
   useEffect(() => {
-    if (Autoplay && gameState?.isUserTurn && !loading && !isPending) {
-      finalTest();
+    if (autoplay && gameState?.isUserTurn && !loading && !isPending) {
+      playBestMove();
     }
-  }, [gameState?.isUserTurn, Autoplay]);
+  }, [gameState?.isUserTurn, autoplay]);
 
   return (
-    <div className="flex flex-col w-80 space-y-1">
-      <h4 className="scroll-m-20 text-lg font-semibold tracking-tight text-center border-b-1 opacity-bo py-2  bg-background">
-        Autoplay Chess AI
-      </h4>
-      <Tabs defaultValue="General">
-        <TabsList>
-          <TabsTrigger value="General">General</TabsTrigger>
-          <TabsTrigger value="History">History</TabsTrigger>
-        </TabsList>
-        <TabsContent value="General">
-          <div className="p-4 flex flex-col space-y-3">
-            <TrafficLight value={gameState?.isUserTurn == true} />
-            <div className="flex items-center justify-end space-x-2">
-              <h5 className="font-semibold text-sm"> AutoPlay </h5>
+    <Card className="w-80 shadow-md  rounded-none pt-0 pb-4 gap-4">
+      <CardHeader className=" pt-3 bg-background">
+        <CardTitle className="text-center text-lg font-semibold">
+          ♟️ Autoplay Chess AI
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent>
+        <Tabs defaultValue="general" className="w-full">
+          <TabsList className="grid grid-cols-2 w-full">
+            <TabsTrigger value="general">General</TabsTrigger>
+            <TabsTrigger value="history">History</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="general" className="pt-4 space-y-4">
+            {/* État du jeu */}
+            <div className="flex justify-center">
+              <TrafficLight value={gameState?.isUserTurn === true} />
+            </div>
+
+            {/* Autoplay switch */}
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">Autoplay</span>
               <Switch
-                checked={Autoplay}
+                checked={autoplay}
                 onCheckedChange={handleAutoplayChange}
               />
             </div>
-            <Button
-              onClick={finalTest}
-              disabled={
-                loading || isPending || Autoplay || !gameState?.isUserTurn
-              }
-            >
-              {loading && !Autoplay && <Loader2Icon className="animate-spin" />}{" "}
-              {gameState?.isUserTurn ? "Move" : "Wait for your turn"}
-            </Button>
-          </div>
-        </TabsContent>
-        <TabsContent value="History"></TabsContent>
-      </Tabs>
 
-      {/* <h4 className="scroll-m-20 text-lg font-semibold tracking-tight text-center border-b-1 opacity-bo  bg-background">
-        Autoplay Chess AI
-      </h4>
-      <div className="p-4 flex flex-col space-y-3">
-        <TrafficLight value={gameState?.isUserTurn == true} />
-        <div className="flex items-center justify-end space-x-2">
-          <h5 className="font-semibold text-sm"> AutoPlay </h5>
-          <Switch checked={Autoplay} onCheckedChange={handleAutoplayChange} />
-        </div>
-        <Button
-          onClick={finalTest}
-          disabled={loading || isPending || Autoplay || !gameState?.isUserTurn}
-        >
-          {loading && !Autoplay && <Loader2Icon className="animate-spin" />}{" "}
-          {gameState?.isUserTurn ? "Move" : "Wait for your turn"}
-        </Button>
-      </div> */}
-    </div>
+            {/* Bouton Move */}
+            <Button
+              onClick={playBestMove}
+              disabled={
+                loading || isPending || autoplay || !gameState?.isUserTurn
+              }
+              className="w-full"
+            >
+              {loading && !autoplay && (
+                <Loader2Icon className="animate-spin mr-2" />
+              )}
+              {gameState?.isUserTurn ? "Make Move" : "Waiting for Opponent..."}
+            </Button>
+          </TabsContent>
+
+          <TabsContent value="history" className="text-sm">
+            {gameState?.history?.length ? (
+              <MoveHistory history={gameState.history} userColor={gameState?.userColor} reason={reason} />
+            ) : (
+              <p className="text-muted-foreground">No moves recorded yet.</p>
+            )}
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
   );
 }
