@@ -66,15 +66,15 @@ ${rag}
         .string()
         .describe(`string, exactly 2 chars, algebraic square (e.g. "e4")`),
       promotion: z
-        .string()
+        .nativeEnum(Piece)
         .nullable()
         .describe(
-          `If this move is a promotion, set to one of ["q","r","b","n"]. Otherwise null.`
+          `If this move is a promotion, set to one of ${Object.values(Piece).join(", ")}. Otherwise null.`
         ),
       reason: z
         .string()
         .describe(
-          "1–3 concise sentences explaining *why* this move is best, referencing the current board and relevant previous moves. If a tactic or forced line exists, include the principal variation in SAN or UCI (max 5 plies) inside the reason."
+          "1 to 3 concise sentences explaining *why* this move is best, referencing the current board and relevant previous moves. If a tactic or forced line exists, include the principal variation in SAN or UCI (max 5 plies) inside the reason."
         ),
     }),
   });
