@@ -12,7 +12,7 @@ export function getGameState(): GameState {
   const isFirstTurn = lastTurn === null;
 
   const isUserTurn =
-    (isFirstTurn && userColor === "white") || lastTurn.color === userColor;
+    (isFirstTurn && userColor === "white") || lastTurn.color !== userColor;
 
   return {
     pieces,

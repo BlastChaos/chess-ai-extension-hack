@@ -44,15 +44,24 @@ const isPlaying = () => {
       currentActiveButton.click();
     }
 
-    if (useList) {
-      return true;
+    const isPlaying = !!useList;
+
+    if (!isPlaying) {
+      console.log("User is not playing");
+      return;
     }
-    return false;
+    console.log("User is playing");
+    const gameState = getGameState();
+
+    chrome.runtime.sendMessage<Props<"GameState">>({
+      type: "GameState",
+      gameState: gameState,
+    });
   });
 
   observer.observe(boardLayout, {
     childList: true,
-    subtree: true, // <-- important to include children-of-children
+    subtree: true,
     attributes: true,
     attributeOldValue: true,
   });

@@ -1,10 +1,10 @@
 import type { GameState, Position } from "@chess-ai/ai";
 
-export type MessageType = "getChessInfo" | "move";
+export type MessageType = "getChessInfo" | "move" | "GameState";
 
 export type Props<T extends MessageType> = {
   type: T;
-} & (T extends "move" ? { from: Position; to: Position } : {});
+} & (T extends "move" ? { from: Position; to: Position } : T extends "GameState" ? { gameState: GameState } : {});
 
 type Output<T extends MessageType> = T extends "getChessInfo"
   ? GameState
