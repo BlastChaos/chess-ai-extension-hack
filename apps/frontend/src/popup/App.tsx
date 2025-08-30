@@ -10,6 +10,7 @@ import { Loader2Icon } from "lucide-react";
 import { getStorage, saveStorage } from "@/utils/storage";
 import { useGetGameState } from "@/hook/useGetGameState";
 import { TrafficLight } from "@/components/trafficLight";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function App() {
   const { mutateAsync, isPending } = useMutation(
@@ -60,8 +61,40 @@ export default function App() {
   }, [gameState?.isUserTurn, Autoplay]);
 
   return (
-    <div className="flex flex-col w-80">
-      <h4 className="scroll-m-20 text-lg font-semibold tracking-tight text-center border-b-1 opacity-bo  bg-background">
+    <div className="flex flex-col w-80 space-y-1">
+      <h4 className="scroll-m-20 text-lg font-semibold tracking-tight text-center border-b-1 opacity-bo py-2  bg-background">
+        Autoplay Chess AI
+      </h4>
+      <Tabs defaultValue="General">
+        <TabsList>
+          <TabsTrigger value="General">General</TabsTrigger>
+          <TabsTrigger value="History">History</TabsTrigger>
+        </TabsList>
+        <TabsContent value="General">
+          <div className="p-4 flex flex-col space-y-3">
+            <TrafficLight value={gameState?.isUserTurn == true} />
+            <div className="flex items-center justify-end space-x-2">
+              <h5 className="font-semibold text-sm"> AutoPlay </h5>
+              <Switch
+                checked={Autoplay}
+                onCheckedChange={handleAutoplayChange}
+              />
+            </div>
+            <Button
+              onClick={finalTest}
+              disabled={
+                loading || isPending || Autoplay || !gameState?.isUserTurn
+              }
+            >
+              {loading && !Autoplay && <Loader2Icon className="animate-spin" />}{" "}
+              {gameState?.isUserTurn ? "Move" : "Wait for your turn"}
+            </Button>
+          </div>
+        </TabsContent>
+        <TabsContent value="History"></TabsContent>
+      </Tabs>
+
+      {/* <h4 className="scroll-m-20 text-lg font-semibold tracking-tight text-center border-b-1 opacity-bo  bg-background">
         Autoplay Chess AI
       </h4>
       <div className="p-4 flex flex-col space-y-3">
@@ -77,7 +110,7 @@ export default function App() {
           {loading && !Autoplay && <Loader2Icon className="animate-spin" />}{" "}
           {gameState?.isUserTurn ? "Move" : "Wait for your turn"}
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 }
