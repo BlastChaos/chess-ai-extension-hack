@@ -1,8 +1,9 @@
 import { generateObject } from "ai";
 import { GameState, Piece, Position } from "../types.js";
 import { chessToSquare, squareToChess } from "../utils/convert.js";
-import { google } from "@ai-sdk/google";
+import { openai } from "@ai-sdk/openai";
 import z from "zod";
+import { rag } from "./RAG.js";
 
 type Response = {
   initialPosition: Position;
@@ -18,9 +19,7 @@ export async function getBestMove(gameState: GameState): Promise<Response> {
   });
 
   const oldMovesString = gameState.history.map((move) => {
-    const from = squareToChess(move.from);
-    const to = squareToChess(move.to);
-    return `- ${move.piece} ${move.color} moved from ${from} to ${to}. Turn: ${move.turn}.`;
+    return `${move.turn}: ${move.piece} ${move.moveString}`;
   });
 
   const prompt = `
@@ -30,7 +29,6 @@ CONSTRAINTS ON MOVE:
 - The move MUST be legal from the provided board position and must match "initialPosition" → "finalPosition".
 - If castling, set initialPosition and finalPosition to the king's start and end squares (e.g. "e1" → "g1") and moveType "castle".
 - If promotion, set "promotion" appropriately and moveType "promotion".
-- Do not invent or change the board state, and do not rely on hidden knowledge beyond the provided piecesString and oldMovesString.
 
 PREFERENCES (tie-breakers):
 1. Forced checkmate sequence (shortest mate).
@@ -38,18 +36,27 @@ PREFERENCES (tie-breakers):
 3. Long-term positional advantage (central control, piece activity, king safety).
 4. Simpler, low-risk moves if equal.
 
-BOARD & MOVE HISTORY (use only these):
+BOARD STATUS (use only these):
 ${piecesString.join("\n")}
 
 Old moves (chronological):
 ${oldMovesString.join("\n")}
 
 Side to move: ${gameState.userColor}
-It is this side's turn.
+
+Here's some information about the chess rules:
+${rag}
   `;
 
+  console.log("Waiting for best move");
+  console.log("prompt", prompt);
+
+  const numberOfMoves = oldMovesString.length;
+  const gameLLM =
+    numberOfMoves >= 40 ? openai("gpt-5-nano") : openai("gpt-4.1");
   const { object } = await generateObject({
-    model: google("gemini-2.5-pro"),
+    model: gameLLM,
+
     prompt: prompt,
     schema: z.object({
       initialPosition: z

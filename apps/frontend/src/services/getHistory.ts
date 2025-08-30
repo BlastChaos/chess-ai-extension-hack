@@ -24,7 +24,9 @@ export function getHistory(): Move[] {
   });
 
   return sortedHistory.flatMap((item) => {
-    const moveNumber = Number(item.dataset.wholeMoveNumber ?? 0);
+    const wholeMoveNumber = Number(item.dataset.wholeMoveNumber ?? 0);
+
+    const moveNumber = wholeMoveNumber === 1 ? 1 : wholeMoveNumber + 1;
     const white = item.querySelector<HTMLDivElement>("div.white-move")!;
 
     const whiteTurn = getMove(white, moveNumber, "white");
