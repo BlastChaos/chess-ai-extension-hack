@@ -7,7 +7,7 @@ import z from "zod";
 type Response = {
   initialPosition: Position;
   finalPosition: Position;
-  promotion?: Pieces | null;
+  promotion: Pieces | null;
   reason: string;
 };
 

@@ -33,7 +33,6 @@ export type GameState = {
     color: Colors;
     position: Position;
   }[];
-  turn: Colors;
   history: Move[];
   currentTurn: Colors;
   userColor: Colors;
