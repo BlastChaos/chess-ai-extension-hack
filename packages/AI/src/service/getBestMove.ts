@@ -51,8 +51,7 @@ ${chessInfo}
   console.log("prompt", prompt);
 
   const numberOfMoves = oldMovesString.length;
-  const gameLLM =
-    numberOfMoves >= 40 ? openai("gpt-5-nano") : openai("gpt-4.1");
+  const gameLLM = numberOfMoves >= 24 ? openai("gpt-5") : openai("gpt-4.1");
   const { object } = await generateObject({
     model: gameLLM,
 
