@@ -1,4 +1,4 @@
-export const rag = `
+export const chessInfo = `
 # Movements
 Except for any move of the knight and castling, pieces cannot jump over other pieces. A piece is captured (or taken) when an attacking enemy piece replaces it on its square. The captured piece is thereby permanently removed from the game. The king can be put in check but cannot be captured
 

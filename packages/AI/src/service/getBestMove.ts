@@ -3,8 +3,7 @@ import { GameState, Piece, Position } from "../types.js";
 import { chessToSquare, squareToChess } from "../utils/convert.js";
 import { openai } from "@ai-sdk/openai";
 import z from "zod";
-import { rag } from "./RAG.js";
-
+import { chessInfo } from "./chessInfo.js";
 type Response = {
   initialPosition: Position;
   finalPosition: Position;
@@ -45,7 +44,7 @@ ${oldMovesString.join("\n")}
 Side to move: ${gameState.userColor}
 
 Here's some information about the chess rules:
-${rag}
+${chessInfo}
   `;
 
   console.log("Waiting for best move");
