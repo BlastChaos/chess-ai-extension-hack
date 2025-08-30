@@ -14,3 +14,47 @@ chrome.runtime.onMessage.addListener(
     }
   }
 );
+
+const isPlaying = () => {
+  // document.querySelector("wc-simple-move-list");
+  const boardLayout = document.querySelector("div.board-layout-sidebar");
+
+  if (!boardLayout) {
+    console.log("boardLayout not found");
+    return false;
+  }
+
+  const observer = new MutationObserver(() => {
+    //Have access to the history
+
+    const currentActiveButton = document.getElementsByClassName(
+      "underlined-tabs-active"
+    )[0] as HTMLButtonElement;
+
+    const button = document.querySelector<HTMLButtonElement>(
+      'button[data-tab="GameViewTab.Moves"]'
+    );
+    if (button) {
+      button.click();
+    }
+
+    const useList = document.querySelector("wc-simple-move-list");
+
+    if (currentActiveButton) {
+      currentActiveButton.click();
+    }
+
+    if (useList) {
+      return true;
+    }
+    return false;
+  });
+
+  observer.observe(boardLayout, {
+    childList: true,
+    subtree: true, // <-- important to include children-of-children
+    attributes: true,
+    attributeOldValue: true,
+  });
+};
+isPlaying();
