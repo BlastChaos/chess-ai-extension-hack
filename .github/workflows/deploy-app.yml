@@ -26,6 +26,8 @@ jobs:
         run: npm ci
 
       - name: Build the extension
+        env:
+          VITE_BACKEND_URL: ${{ secrets.VITE_BACKEND_URL }}
         run: npm run build
 
       - name: Find generated zip file
