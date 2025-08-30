@@ -2,45 +2,75 @@ import "./index.css";
 import { useMutation } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { sendMessage } from "@/utils/sendMessage";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@radix-ui/react-label";
+import { Loader2Icon } from "lucide-react";
+import { getStorage, saveStorage } from "@/utils/storage";
 import { useGetGameState } from "@/hook/useGetGameState";
+
 export default function App() {
-  const { mutateAsync } = useMutation(trpc.getBestMove.mutationOptions());
+  const { mutateAsync, isPending } = useMutation(
+    trpc.getBestMove.mutationOptions()
+  );
+  const { gameState } = useGetGameState();
+  const [loading, setLoading] = useState(false);
+  const [Autoplay, setAutoplay] = useState(false);
 
-
-  const { gameState, loading } = useGetGameState();
-  console.log("gameState", gameState);
+  /** Exécute le coup recommandé par l'IA */
   const finalTest = async () => {
-    console.log("finalTest");
-    const test = await sendMessage({
-      type: "getChessInfo",
-    });
-    console.log("test send message", test);
-    if (!test) {
-      return;
-    }
-    if (test) {
-      console.log("test mutate async", test);
-      const bestMove = await mutateAsync(test.gameState);
-      if (!bestMove) {
-        return;
-      }
+    setLoading(true);
 
-      console.log("test send message", bestMove);
+    try {
+      const chessInfo = await sendMessage({ type: "getChessInfo" });
+      if (!chessInfo) return;
+
+      const bestMove = await mutateAsync(chessInfo.gameState);
+      if (!bestMove) return;
+
       await sendMessage({
         type: "move",
         from: bestMove.initialPosition,
         to: bestMove.finalPosition,
       });
+    } finally {
+      setLoading(false);
     }
   };
+
+  /** Gestion du switch Autoplay */
+  const handleAutoplayChange = (value: boolean) => {
+    saveStorage({ autoPlay: value });
+    setAutoplay(value);
+  };
+
+  /** Charge la config initiale (storage) */
+  useEffect(() => {
+    getStorage("autoPlay").then((res) => {
+      if (res != null) setAutoplay(res);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (Autoplay && gameState?.isUserTurn && !loading && !isPending) {
+      finalTest();
+    }
+  }, [gameState?.isUserTurn, Autoplay]);
+
   return (
-    <div className="p-4 flex flex-col w-64">
-      <button
-        className="bg-blue-500 text-white p-2 rounded-md"
-        onClick={finalTest}
-      >
-        Get Chess Info
-      </button>
+    <div className="p-4 flex flex-col w-64 space-y-3">
+    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight text-center border-b">
+      Autoplay Chess AI
+    </h4>
+      <div className="flex items-center justify-between"></div>
+      <div className="flex items-center justify-end space-x-2">
+        <Label>Autoplay</Label>
+        <Switch checked={Autoplay} onCheckedChange={handleAutoplayChange} />
+      </div>
+      <Button onClick={finalTest} disabled={loading || isPending || Autoplay || !gameState?.isUserTurn}>
+        {(loading && !Autoplay) && <Loader2Icon className="animate-spin" />} { gameState?.isUserTurn ? "Move" : "Wait for your turn"}
+      </Button>
     </div>
   );
 }
