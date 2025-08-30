@@ -29,20 +29,18 @@ export default function App() {
 
       const bestMove = await mutateAsync(chessInfo.gameState);
       if (!bestMove) return;
-      console.log(bestMove)
-      console.log(reason)
+      console.log(bestMove);
+      console.log(reason);
       getStorage("reason").then((res) => {
         if (res == null) {
           var reason = [bestMove.reason ?? "No explanation available"];
           setReason(reason);
           saveStorage({ reason: reason });
-        }
-        else {
+        } else {
           var reason2 = [...res, bestMove.reason ?? "No explanation available"];
           setReason(reason2);
           saveStorage({ reason: reason2 });
         }
-        
       });
       await sendMessage({
         type: "move",
@@ -72,7 +70,7 @@ export default function App() {
     if (autoplay && gameState?.isUserTurn && !loading && !isPending) {
       playBestMove();
     }
-  }, [gameState?.isUserTurn, autoplay]);
+  }, [gameState?.isUserTurn, autoplay, loading]);
 
   return (
     <Card className="w-80 shadow-md  rounded-none pt-0 pb-4 gap-4">
@@ -121,7 +119,11 @@ export default function App() {
 
           <TabsContent value="history" className="text-sm">
             {gameState?.history?.length ? (
-              <MoveHistory history={gameState.history} userColor={gameState?.userColor} reason={reason} />
+              <MoveHistory
+                history={gameState.history}
+                userColor={gameState?.userColor}
+                reason={reason}
+              />
             ) : (
               <p className="text-muted-foreground">No moves recorded yet.</p>
             )}
