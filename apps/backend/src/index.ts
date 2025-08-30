@@ -6,7 +6,9 @@ import {
   FastifyTRPCPluginOptions,
 } from "@trpc/server/adapters/fastify";
 import { createContext, AppRouter, appRouter } from "@chess-ai/ai";
-import { config } from "./config";
+export const config = {
+  port: Number(process.env.PORT) || 3001,
+};
 
 dotenv.config();
 
