@@ -33,4 +33,4 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 backend
 USER backend
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "apps/backend/dist/index.js"]
