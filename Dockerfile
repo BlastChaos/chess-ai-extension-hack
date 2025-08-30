@@ -26,7 +26,7 @@ RUN npm install --frozen-lockfile
 
 # Build the project
 COPY --from=builder /app/out/full/ .
-RUN npm turbo run build
+RUN npx turbo run build
 
 # Don't run production as root
 RUN addgroup --system --gid 1001 nodejs
