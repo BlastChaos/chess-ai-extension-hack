@@ -9,6 +9,7 @@ import { Label } from "@radix-ui/react-label";
 import { Loader2Icon } from "lucide-react";
 import { getStorage, saveStorage } from "@/utils/storage";
 import { useGetGameState } from "@/hook/useGetGameState";
+import { TrafficLight } from "@/components/trafficLight";
 
 export default function App() {
   const { mutateAsync, isPending } = useMutation(
@@ -59,18 +60,24 @@ export default function App() {
   }, [gameState?.isUserTurn, Autoplay]);
 
   return (
-    <div className="p-4 flex flex-col w-64 space-y-3">
-    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight text-center border-b">
-      Autoplay Chess AI
-    </h4>
-      <div className="flex items-center justify-between"></div>
-      <div className="flex items-center justify-end space-x-2">
-        <Label>Autoplay</Label>
-        <Switch checked={Autoplay} onCheckedChange={handleAutoplayChange} />
+    <div className="flex flex-col w-80">
+      <h4 className="scroll-m-20 text-lg font-semibold tracking-tight text-center border-b-1 opacity-bo  bg-background">
+        Autoplay Chess AI
+      </h4>
+      <div className="p-4 flex flex-col space-y-3">
+        <TrafficLight value={gameState?.isUserTurn == true} />
+        <div className="flex items-center justify-end space-x-2">
+          <h5 className="font-semibold text-sm"> AutoPlay </h5>
+          <Switch checked={Autoplay} onCheckedChange={handleAutoplayChange} />
+        </div>
+        <Button
+          onClick={finalTest}
+          disabled={loading || isPending || Autoplay || !gameState?.isUserTurn}
+        >
+          {loading && !Autoplay && <Loader2Icon className="animate-spin" />}{" "}
+          {gameState?.isUserTurn ? "Move" : "Wait for your turn"}
+        </Button>
       </div>
-      <Button onClick={finalTest} disabled={loading || isPending || Autoplay || !gameState?.isUserTurn}>
-        {(loading && !Autoplay) && <Loader2Icon className="animate-spin" />} { gameState?.isUserTurn ? "Move" : "Wait for your turn"}
-      </Button>
     </div>
   );
 }
