@@ -22,7 +22,7 @@ export default defineManifest({
   content_scripts: [
     {
       js: ["src/content/content.ts"],
-      matches: ["https://*/*"],
+      matches: ["https://www.chess.com/*"],
     },
   ],
 });
