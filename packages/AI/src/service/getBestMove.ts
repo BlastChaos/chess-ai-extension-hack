@@ -1,5 +1,5 @@
 import { generateObject } from "ai";
-import { GameState, Piece, PlayAs, Position } from "../types.js";
+import { GameState, Piece, Position } from "../types.js";
 import { chessToSquare, squareToChess } from "../utils/convert.js";
 import { openai } from "@ai-sdk/openai";
 import z from "zod";
@@ -15,7 +15,7 @@ type Response = {
 export async function getBestMove(gameState: GameState): Promise<Response> {
   const piecesString = gameState.pieces.map((piece) => {
     const position = squareToChess(piece.position);
-    return `- Piece: ${piece.piece} ${piece.color} at ${position}`;
+    return `- ${piece.piece} ${piece.color} at ${position}`;
   });
   const similarState = await findSimilarState(gameState);
 
@@ -23,12 +23,17 @@ export async function getBestMove(gameState: GameState): Promise<Response> {
     return `${move.turn}: ${move.piece} ${move.moveString}`;
   });
 
-  const similarStateString = similarState.map((state) => {
-    return `Move from ${state.from} to ${state.to}`;
-  });
+  const similarStatesSet = new Set(
+    similarState.map((state) => {
+      return `Move from ${state.from} to ${state.to}`;
+    })
+  );
+
+  const similarStateString = Array.from(similarStatesSet).join("\n");
 
   const prompt = `
-You are a chess engine assistant. Using only the exact board state and move history I give below, choose the single BEST legal move for the side to move.
+You are a chess engine assistant. Using the exact board state I give below, choose the BEST LEGAL move I should make.
+I'm the ${gameState.userColor}.
 
 CONSTRAINTS ON MOVE:
 - The move MUST be legal from the provided board position and must match "initialPosition" → "finalPosition".
@@ -41,15 +46,26 @@ PREFERENCES (tie-breakers):
 3. Long-term positional advantage (central control, piece activity, king safety).
 4. Simpler, low-risk moves if equal.
 
-BOARD STATUS (use only these):
+BOARD STATUS:
 ${piecesString.join("\n")}
 
+${
+  similarStateString.length > 0
+    ? `
+Here's some suggested moves. You can use these moves as a reference. It's up to you.
+${similarStateString}
+`
+    : ""
+}
+
+${
+  similarStateString.length === 0
+    ? `
 Old moves (chronological):
 ${oldMovesString.join("\n")}
-
-Side to move: ${gameState.userColor}
-
-${similarStateString.length > 0 ? `Here's some move you can consider. Use them only if you think they are better than the moves you already have.\n${similarStateString.join("\n")}` : ""}
+`
+    : ""
+}
 
 Here's some information about the chess rules:
 ${chessInfo}
@@ -67,10 +83,12 @@ ${chessInfo}
     schema: z.object({
       initialPosition: z
         .string()
-        .describe(`string, exactly 2 chars, algebraic square (e.g. "e2")`),
+        .length(2)
+        .describe(`This is the initial position we must move from. The position is based on the chess board and must contain only 2 chars. (e.g. "e2")`),
       finalPosition: z
         .string()
-        .describe(`string, exactly 2 chars, algebraic square (e.g. "e4")`),
+        .length(2)
+        .describe(`This is the final position we must move to. The position is based on the chess board and must contain only 2 chars. (e.g. "e4")`),
       promotion: z
         .nativeEnum(Piece)
         .nullable()
@@ -80,8 +98,8 @@ ${chessInfo}
       reason: z
         .string()
         .describe(
-        `Explain simply why the AI made this move, its purpose, threats addressed, opportunities created, and immediate board advantage in 20 words or less. And it begins with "I choose {move} because...".`
-          ),
+          `Explain simply why the AI made this move, its purpose, threats addressed, opportunities created, and immediate board advantage in 20 words or less. And it begins with "I choose {move} because...".`
+        ),
     }),
   });
 

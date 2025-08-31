@@ -34,7 +34,7 @@ export const findSimilarState = async (gameState: GameState) => {
     .from(chessInfo)
     .where(
       and(
-        gt(chessInfo.gameState, positionsString),
+        eq(chessInfo.gameState, positionsString),
         eq(chessInfo.userName, gameState.playAs),
         eq(chessInfo.color, gameState.userColor)
       )
