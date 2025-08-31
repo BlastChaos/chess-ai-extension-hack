@@ -72,8 +72,8 @@ ${chessInfo}
       reason: z
         .string()
         .describe(
-          "1 to 3 concise sentences explaining *why* this move is best, referencing the current board and relevant previous moves. If a tactic or forced line exists, include the principal variation in SAN or UCI (max 5 plies) inside the reason."
-        ),
+        `Explain simply why the AI made this move, its purpose, threats addressed, opportunities created, and immediate board advantage in 20 words or less. And it begins with "I choose {move} because...".`
+          ),
     }),
   });
 

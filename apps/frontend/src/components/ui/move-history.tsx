@@ -4,7 +4,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Color, Move } from "@chess-ai/ai";
+import { Color, Move, Reason } from "@chess-ai/ai";
 const pieceToIcon: Record<string, string> = {
   pawn: "♟",
   knight: "♞",

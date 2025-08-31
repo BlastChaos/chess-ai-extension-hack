@@ -1,4 +1,4 @@
-import type { GameState } from "@chess-ai/ai";
+import type { Color, GameState, Reason } from "@chess-ai/ai";
 
 type Storage = {
   isGaming: boolean;
@@ -6,6 +6,9 @@ type Storage = {
   autoPlay: boolean;
   reason: string[];
 };
+
+
+
 // cache mémoire local
 let memoryCache: Record<string, any> = {}
 
