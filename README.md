@@ -1,3 +1,8 @@
+# Chess AI
+Chess AI hooks into chess.com and automatically plays every move of your game. Once enabled during a match, our extension reads the current board position and uses an LLM to select and click the best move each turn. The user never has to make a move. The AI does it all.
+
+![Example](./public/example.gif)
+
 ## Develop
 
 ### Requirements
