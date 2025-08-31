@@ -16,7 +16,7 @@ export default defineConfig({
   plugins: [
     react(),
     crx({ manifest }),
-    zip({ outDir: "release", outFileName: `Chess AI-${version}.zip` }),
+    zip({ outDir: "release", outFileName: `Chess-AI-${version}.zip` }),
     tailwindcss(),
   ],
   server: {
