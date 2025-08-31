@@ -2,7 +2,7 @@ import { defineManifest } from "@crxjs/vite-plugin";
 
 export default defineManifest({
   manifest_version: 3,
-  name: "Autoplay Chess AI",
+  name: "Chess AI",
   version: "1.0.0",
   icons: {
     48: "public/logo.png",

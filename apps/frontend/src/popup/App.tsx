@@ -119,7 +119,7 @@ export default function App() {
     <Card className="w-80 shadow-md  rounded-none pt-0 pb-4 gap-4">
       <CardHeader className=" pt-3 bg-background">
         <CardTitle className="text-center text-lg font-semibold">
-          ♘ Autoplay Chess AI
+          ♘ Chess AI
         </CardTitle>
       </CardHeader>
 
