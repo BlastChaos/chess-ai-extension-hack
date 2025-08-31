@@ -46,7 +46,10 @@ export default function App() {
       const chessInfo = await sendMessage({ type: "getChessInfo" });
       if (!chessInfo) return;
 
-      const bestMove = await mutateAsync({...chessInfo.gameState, playAs: player});
+      const bestMove = await mutateAsync({
+        ...chessInfo.gameState,
+        playAs: player,
+      });
       if (!bestMove) return;
 
       getStorage("reason").then((res) => {
@@ -179,6 +182,13 @@ export default function App() {
                 onCheckedChange={handleAutoplayChange}
               />
             </div>
+
+            {/* Move longer*/}
+            {gameState?.history && gameState?.history.length >= 24 && (
+              <span className="text-sm font-light">
+                AI’s serious now—thinking will take longer. 🧐
+              </span>
+            )}
 
             {/* Bouton Move */}
             <Button

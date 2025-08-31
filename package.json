@@ -1,5 +1,6 @@
 {
   "name": "chess-ai-extension-hack",
+  "author": "James and Jason Brutus",
   "private": true,
   "scripts": {
     "build": "turbo run build",
