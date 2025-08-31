@@ -1,12 +1,12 @@
 import { db } from "../db/index.js";
 import { chessInfo } from "../db/schema.js";
-import { PlayAs } from "../types.js";
+import { PlayAsArray } from "../types.js";
 import { getChessInfo } from "../utils/getChessInfo.js";
 
 const MAXIMUM_MOVES = 1000;
 
 export const addUsersGame = async () => {
-  const playAs = Object.keys(PlayAs);
+  const playAs = PlayAsArray;
 
   console.log("Getting chess info for ", playAs);
   const promises = playAs.map(async (playAs) => {

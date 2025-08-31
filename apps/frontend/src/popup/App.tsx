@@ -12,8 +12,15 @@ import { TrafficLight } from "@/components/trafficLight";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { MoveHistory } from "@/components/ui/move-history";
+import type { PlayAs } from "@chess-ai/ai";
 
 export default function App() {
+  const PlayAs: Record<PlayAs, string> = {
+    gothamchess: "Levy Rozman",
+    hikaru: "Hikaru Nakamura",
+    magnuscarlsen: "Magnus Carlsen",
+  } as const;
+
   const { mutateAsync, isPending } = useMutation(
     trpc.getBestMove.mutationOptions()
   );
