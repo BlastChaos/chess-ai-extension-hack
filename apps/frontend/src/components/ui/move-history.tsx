@@ -4,7 +4,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Color, Move, Reason } from "@chess-ai/ai";
+import { Color, Move } from "@chess-ai/ai";
 const pieceToIcon: Record<string, string> = {
   pawn: "♟",
   knight: "♞",
@@ -28,7 +28,6 @@ export function MoveHistory({
   userColor: Color;
   reason: string[];
 }) {
-    
   return (
     <div className="max-h-64 overflow-y-auto rounded-md px-3  bg-muted/30">
       <table className="w-full text-sm ">
@@ -52,7 +51,7 @@ export function MoveHistory({
                           {formatMove(move)}
                         </TooltipTrigger>
                         <TooltipContent className="max-w-xs">
-                          <p>{reason[(idx / 2)] ?? "No explanation available"}</p>
+                          <p>{reason[idx / 2] ?? "No explanation available"}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -61,7 +60,7 @@ export function MoveHistory({
                   ))}
               </td>
               <td className="py-1">
-              {move.color === "black" &&
+                {move.color === "black" &&
                   (userColor === "black" ? (
                     <TooltipProvider>
                       <Tooltip>
@@ -69,7 +68,10 @@ export function MoveHistory({
                           {formatMove(move)}
                         </TooltipTrigger>
                         <TooltipContent className="max-w-xs">
-                          <p>{reason[(idx - 1) / 2] ?? "No explanation available"}</p>
+                          <p>
+                            {reason[(idx - 1) / 2] ??
+                              "No explanation available"}
+                          </p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
