@@ -34,10 +34,10 @@ export default function App() {
         if (res == null) {
           var reason = bestMove.reason ?? "No explanation available";
           setReason([reason]);
-          saveStorage({ reason: [reason],  });
+          saveStorage({ reason: [reason] });
         } else {
           var reason2 = [...res, bestMove.reason ?? "No explanation available"];
-          
+
           setReason(reason2);
           saveStorage({ reason: reason2 });
         }
@@ -67,22 +67,22 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    
     if (gameState?.history == undefined || gameState.history.length === 0) {
       setReason([]);
       saveStorage({ reason: [] });
     } else {
-      var length = gameState.history.filter(s => s.color === gameState?.userColor).length
-      console.log("reason", reason.length)
-      console.log("history", length)
-      if(reason.length > length) {
-        var currentReason = reason[reason.length-1];
+      var length = gameState.history.filter(
+        (s) => s.color === gameState?.userColor
+      ).length;
+      console.log("reason", reason.length);
+      console.log("history", length);
+      if (reason.length > length) {
+        var currentReason = reason[reason.length - 1];
         const newReason = reason.slice(0, length - 1);
         newReason.push(currentReason!);
         setReason(newReason);
         saveStorage({ reason: newReason });
-        console.log("reason final", newReason.length)
-
+        console.log("reason final", newReason.length);
       }
     }
   }, [gameState?.history]);
@@ -93,12 +93,12 @@ export default function App() {
     }
   }, [gameState?.isUserTurn, autoplay, loading]);
 
-console.log(reason)
+  console.log(reason);
   return (
     <Card className="w-80 shadow-md  rounded-none pt-0 pb-4 gap-4">
       <CardHeader className=" pt-3 bg-background">
         <CardTitle className="text-center text-lg font-semibold">
-          ♟️ Autoplay Chess AI
+          ♘ Autoplay Chess AI
         </CardTitle>
       </CardHeader>
 
