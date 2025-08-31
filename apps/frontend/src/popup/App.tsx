@@ -13,6 +13,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { MoveHistory } from "@/components/ui/move-history";
 import type { PlayAs } from "@chess-ai/ai";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function App() {
   const PlayAs: Record<PlayAs, string> = {
@@ -20,6 +30,7 @@ export default function App() {
     hikaru: "Hikaru Nakamura",
     magnuscarlsen: "Magnus Carlsen",
   } as const;
+  const [key, setKey] = useState(+new Date());
 
   const { mutateAsync, isPending } = useMutation(
     trpc.getBestMove.mutationOptions()
@@ -28,13 +39,14 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [autoplay, setAutoplay] = useState(false);
   const [reason, setReason] = useState<string[]>([]);
+  const [player, setPlayer] = useState<PlayAs | undefined>(undefined);
   const playBestMove = async () => {
     setLoading(true);
     try {
       const chessInfo = await sendMessage({ type: "getChessInfo" });
       if (!chessInfo) return;
 
-      const bestMove = await mutateAsync(chessInfo.gameState);
+      const bestMove = await mutateAsync({...chessInfo.gameState, playAs: player});
       if (!bestMove) return;
 
       getStorage("reason").then((res) => {
@@ -99,8 +111,10 @@ export default function App() {
       playBestMove();
     }
   }, [gameState?.isUserTurn, autoplay, loading]);
-
-  console.log(reason);
+  // Object.entries(PlayAs).map(([key, value]) => {
+  //   console.log(value);
+  // })
+  console.log(player);
   return (
     <Card className="w-80 shadow-md  rounded-none pt-0 pb-4 gap-4">
       <CardHeader className=" pt-3 bg-background">
@@ -122,6 +136,41 @@ export default function App() {
               <TrafficLight value={gameState?.isUserTurn === true} />
             </div>
 
+            <div className="flex flex-col justify-center w-full">
+              <div>Play the game as:</div>
+              <Select value={player} onValueChange={setPlayer} key={key}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose a player" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Pro player</SelectLabel>
+                    <SelectItem value={"gothamchess"}>
+                      {PlayAs.gothamchess + " (gothamchess)"}
+                    </SelectItem>
+                    <SelectItem value={"hikaru"}>
+                      {PlayAs.hikaru + " (hikaru)"}
+                    </SelectItem>
+                    <SelectItem value={"magnuscarlsen"}>
+                      {PlayAs.magnuscarlsen + " (magnuscarlsen)"}
+                    </SelectItem>
+                  </SelectGroup>
+                  <SelectSeparator />
+                  <Button
+                    className="w-full px-2"
+                    variant="secondary"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPlayer(undefined);
+                      setKey(+new Date());
+                    }}
+                  >
+                    Clear
+                  </Button>
+                </SelectContent>
+              </Select>
+            </div>
             {/* Autoplay switch */}
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Autoplay</span>
