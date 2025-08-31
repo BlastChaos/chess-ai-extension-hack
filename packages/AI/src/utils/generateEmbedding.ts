@@ -1,16 +1,13 @@
-import OpenAI from "openai";
+import { pipeline } from "@xenova/transformers";
 
 export const generateEmbedding = async (value: string): Promise<number[]> => {
+  const embedder = await pipeline(
+    "feature-extraction",
+    "Xenova/all-MiniLM-L6-v2"
+  );
   const input = value.replaceAll("\n", " ");
 
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
+  const embedding = await embedder(input);
 
-  const { data } = await openai.embeddings.create({
-    model: "text-embedding-ada-002",
-    input,
-  });
-
-  return data[0]?.embedding || [];
+  return embedding.data as number[];
 };

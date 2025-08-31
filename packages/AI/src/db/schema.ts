@@ -7,6 +7,8 @@ import {
   vector,
 } from "drizzle-orm/pg-core";
 
+export type NewChessInfo = typeof chessInfo.$inferInsert;
+
 export const chessInfo = pgTable(
   "chess_info",
   {
@@ -16,7 +18,7 @@ export const chessInfo = pgTable(
     from: text("from").notNull(),
     to: text("to").notNull(),
     color: text("color").notNull(),
-    embedding: vector("embedding", { dimensions: 1536 }),
+    embedding: vector("embedding", { dimensions: 384 }),
   },
   (table) => [
     index("embeddingIndex").using(

@@ -1,7 +1,6 @@
-import { and, cosineDistance, desc, gt, sql, eq } from "drizzle-orm";
+import { and, gt, eq } from "drizzle-orm";
 import { GameState } from "../types.js";
 import { squareToChess } from "../utils/convert.js";
-import { generateEmbedding } from "../utils/generateEmbedding.js";
 import { chessInfo } from "../db/schema.js";
 import { db } from "../db/index.js";
 
@@ -11,10 +10,10 @@ export const findSimilarState = async (gameState: GameState) => {
   }
 
   const sortedPieces = gameState.pieces.sort((a, b) => {
-    if (a.position.x !== b.position.x) {
-      return a.position.x - b.position.x;
+    if (a.position.y !== b.position.y) {
+      return b.position.y - a.position.y;
     }
-    return b.position.y - a.position.y;
+    return a.position.x - b.position.x;
   });
 
   const positions: string[] = [];
@@ -27,28 +26,18 @@ export const findSimilarState = async (gameState: GameState) => {
 
   const positionsString = positions.join(", ");
 
-  const embedding = await generateEmbedding(positionsString);
-
-  const similarity = sql<number>`1 - (${cosineDistance(chessInfo.embedding, embedding)})`;
-
   const similarGuides = await db
     .select({
       from: chessInfo.from,
       to: chessInfo.to,
-      similarity,
-      gameState: chessInfo.gameState,
-      color: chessInfo.color,
     })
     .from(chessInfo)
     .where(
       and(
-        gt(similarity, 0.5),
+        gt(chessInfo.gameState, positionsString),
         eq(chessInfo.userName, gameState.playAs),
         eq(chessInfo.color, gameState.userColor)
       )
-    )
-    .orderBy((t) => desc(t.similarity))
-    .limit(4);
-
-  console.log("similarGuides", similarGuides);
+    );
+  return similarGuides;
 };

@@ -47,5 +47,5 @@ export type GameState = {
   currentTurn: Color;
   userColor: Color;
   isUserTurn: boolean;
-  playAs?: PlayAs;
+  playAs?: keyof typeof PlayAs;
 };

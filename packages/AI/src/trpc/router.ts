@@ -1,6 +1,6 @@
 import { publicProcedure, router } from "./trpc.js";
 import { z } from "zod";
-import { Piece, Color } from "../types.js";
+import { Piece, Color, PlayAs } from "../types.js";
 import { getBestMove } from "../service/getBestMove.js";
 
 // Export both the router instance and type
@@ -38,6 +38,7 @@ export const appRouter = router({
         userColor: z.nativeEnum(Color),
         currentTurn: z.nativeEnum(Color),
         isUserTurn: z.boolean(),
+        playAs: z.enum(Object.keys(PlayAs) as [keyof typeof PlayAs]).optional(),
       })
     )
     .output(

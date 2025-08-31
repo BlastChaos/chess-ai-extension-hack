@@ -20,8 +20,10 @@ export const addUsersGame = async () => {
 
   const chessInfos = allChessInfos.flat();
 
-  console.log(`${chessInfos.length} chess info to add`);
-  await db.insert(chessInfo).values(chessInfos);
+  const chunkSize = 50; // or 100
+  for (let i = 0; i < chessInfos.length; i += chunkSize) {
+    await db.insert(chessInfo).values(chessInfos.slice(i, i + chunkSize));
+  }
 
   console.log(`${chessInfos.length} chess info added`);
 };

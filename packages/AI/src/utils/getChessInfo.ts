@@ -1,5 +1,6 @@
 import { Chess } from "chess.js";
 import { Color, Piece } from "../types.js";
+import { generateEmbedding } from "./generateEmbedding.js";
 
 type Archives = {
   archives: string[];
@@ -38,8 +39,11 @@ export async function getChessInfo(
     const archiveData = (await archiveResponse.json()) as Games;
     for (const game of archiveData.games) {
       try {
-        const data = getData(game.pgn, userName);
+        const data = await getData(game.pgn, userName);
         moveInfos.push(...data);
+        console.log(
+          `${userName}: ${moveInfos.length} moves added, only need ${maximumMoves - moveInfos.length} more`
+        );
         if (moveInfos.length >= maximumMoves) {
           break;
         }
@@ -54,7 +58,7 @@ export async function getChessInfo(
   return moveInfos;
 }
 
-function getData(png: string, userName: string): MoveInfo[] {
+async function getData(png: string, userName: string): Promise<MoveInfo[]> {
   const chess = new Chess();
   chess.loadPgn(png);
 
