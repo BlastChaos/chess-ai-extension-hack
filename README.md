@@ -13,7 +13,7 @@
    npm i
    ```
 
-2. In apps/backend, create a **.env** file:
+2. In **apps/backend**, create a **.env** file:
 
    ```typescript
    OPENAI_API_KEY = your_openai_api_key;
