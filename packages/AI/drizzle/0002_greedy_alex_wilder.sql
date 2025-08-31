@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "userName_idx" ON "chess_info" USING btree ("user_name");

@@ -1,3 +1,9 @@
+export const PlayAs = {
+  gothamchess: "Levy Rozman",
+  hikaru: "Hikaru Nakamura",
+  magnuscarlsen: "Magnus Carlsen",
+} as const;
+export type PlayAs = (typeof PlayAs)[keyof typeof PlayAs];
 export const Piece = {
   n: "knight",
   q: "queen",
@@ -41,4 +47,5 @@ export type GameState = {
   currentTurn: Color;
   userColor: Color;
   isUserTurn: boolean;
+  playAs?: PlayAs;
 };

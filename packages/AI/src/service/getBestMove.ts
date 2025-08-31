@@ -1,9 +1,10 @@
 import { generateObject } from "ai";
-import { GameState, Piece, Position } from "../types.js";
+import { GameState, Piece, PlayAs, Position } from "../types.js";
 import { chessToSquare, squareToChess } from "../utils/convert.js";
 import { openai } from "@ai-sdk/openai";
 import z from "zod";
 import { chessInfo } from "./chessInfo.js";
+import { findSimilarState } from "./findSimilarState.js";
 type Response = {
   initialPosition: Position;
   finalPosition: Position;
@@ -15,6 +16,10 @@ export async function getBestMove(gameState: GameState): Promise<Response> {
   const piecesString = gameState.pieces.map((piece) => {
     const position = squareToChess(piece.position);
     return `- Piece: ${piece.piece} ${piece.color} at ${position}`;
+  });
+  const similarState = await findSimilarState({
+    ...gameState,
+    playAs: "Magnus Carlsen",
   });
 
   const oldMovesString = gameState.history.map((move) => {
