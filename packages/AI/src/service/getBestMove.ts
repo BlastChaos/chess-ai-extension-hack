@@ -1,9 +1,10 @@
 import { generateObject } from "ai";
-import { GameState, Piece, Position } from "../types.js";
+import { GameState, Piece, PlayAs, Position } from "../types.js";
 import { chessToSquare, squareToChess } from "../utils/convert.js";
 import { openai } from "@ai-sdk/openai";
 import z from "zod";
 import { chessInfo } from "./chessInfo.js";
+import { findSimilarState } from "./findSimilarState.js";
 type Response = {
   initialPosition: Position;
   finalPosition: Position;
@@ -16,9 +17,14 @@ export async function getBestMove(gameState: GameState): Promise<Response> {
     const position = squareToChess(piece.position);
     return `- Piece: ${piece.piece} ${piece.color} at ${position}`;
   });
+  const similarState = await findSimilarState(gameState);
 
   const oldMovesString = gameState.history.map((move) => {
     return `${move.turn}: ${move.piece} ${move.moveString}`;
+  });
+
+  const similarStateString = similarState.map((state) => {
+    return `Move from ${state.from} to ${state.to}`;
   });
 
   const prompt = `
@@ -42,6 +48,8 @@ Old moves (chronological):
 ${oldMovesString.join("\n")}
 
 Side to move: ${gameState.userColor}
+
+${similarStateString.length > 0 ? `Here's some move you can consider. Use them only if you think they are better than the moves you already have.\n${similarStateString.join("\n")}` : ""}
 
 Here's some information about the chess rules:
 ${chessInfo}

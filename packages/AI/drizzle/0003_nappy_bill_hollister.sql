@@ -1,0 +1,1 @@
+ALTER TABLE "chess_info" ALTER COLUMN "embedding" SET DATA TYPE vector(384);
