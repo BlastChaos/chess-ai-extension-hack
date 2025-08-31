@@ -3,7 +3,7 @@ import { chessInfo } from "../db/schema.js";
 import { PlayAsArray } from "../types.js";
 import { getChessInfo } from "../utils/getChessInfo.js";
 
-const MAXIMUM_MOVES = 3000;
+const MAXIMUM_MOVES = 4000;
 
 export const addUsersGame = async () => {
   const playAs = PlayAsArray;
